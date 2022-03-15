@@ -1,0 +1,7 @@
+image: /home/pablo/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_my_slam/map/my_map.pgm
+mode: trinary
+resolution: 0.05
+origin: [-3.41, -5.14, 0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.25
