@@ -30,6 +30,8 @@ setup(
     entry_points={
         'console_scripts': [
             'initial_pose_pub = automatix_my_nav2_system.initial_pose_pub:main',
+            'navigate_to_pose_client = automatix_my_nav2_system.navigate_to_pose_client:main',
+            'navigate_to_pose_server = automatix_my_nav2_system.navigate_to_pose_server:main',
             'load_map = automatix_my_nav2_system.load_map:main',
             'nav_to_pose = automatix_my_nav2_system.nav_to_pose:main',
             'go_to_pose = automatix_my_nav2_system.go_to_pose:main'
