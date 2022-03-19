@@ -14,6 +14,8 @@
     
     <exec_depend>automatix_my_world</exec_depend>
     <exec_depend>automatix_my_slam</exec_depend>
+    <exec_depend>automatix_my_nav2_system</exec_depend>
+    <exec_depend>automatix_provide_map</exec_depend>
     <!-- Añadir aqui las dependencias creadas-->
     <!--<exec_depend>proy_asun_mundo</exec_depend>
     <exec_depend>proy_asun_nav_punto</exec_depend>

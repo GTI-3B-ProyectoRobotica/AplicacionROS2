@@ -43,22 +43,17 @@
       </ode>
     </physics>
 
-    <!--<model name="turtlebot3_world">
-      <static>1</static>
       <include>
-        <uri>model://turtlebot3_world</uri>
-      </include>
-    </model>-->
-     
-    <include>
       <pose>-2.0 -0.5 0.01 0.0 0.0 0.0</pose>
       <uri>model://automatix_my_world</uri>
-    </include>
+      </include>
     
-    <include>
+      <include>
       <pose>-6.0 1.0 0.01 0.0 0.0 0.0</pose>
       <uri>model://turtlebot3_burger</uri>
-    </include>
+     </include>
+  
+    
 
   </world>
 </sdf>
