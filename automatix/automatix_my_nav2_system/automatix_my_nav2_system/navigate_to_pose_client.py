@@ -10,12 +10,49 @@ class NavigateToPoseClient(Node):
 
     def __init__(self):
         super().__init__('navigate_to_pose_client')
+
+
+        self._inicializar_goal_pose_desde_parametros()
         #creamos el objeto cliente de una accion
         #con parametros
         #nodo
         #tipo de mensaje
         #nombre de la accion
         self._action_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
+
+
+    # funcion para declarar los parametros de lanzamiento del fichero
+    def _inicializar_goal_pose_desde_parametros(self):
+        
+        self.declare_parameter('pose-x', 0.0)
+        self.declare_parameter('pose-y', 0.0)
+
+        self.declare_parameter('orien-x', 0.0)
+        self.declare_parameter('orien-y', 0.0)
+        self.declare_parameter('orien-z', 0.0)
+        self.declare_parameter('orien-w', 1.0)
+
+
+        self.goal_pose = PoseStamped()
+
+        self.goal_pose.header.frame_id = 'map'
+        self.goal_pose.header.stamp = self.get_clock().now().to_msg()
+
+        self.goal_pose.pose.position.x = self.get_parameter('pose-x').get_parameter_value().double_value
+        self.goal_pose.pose.position.y = self.get_parameter('pose-y').get_parameter_value().double_value
+        self.goal_pose.pose.position.z = 0.0 # siempre sera 0
+
+        self.goal_pose.pose.orientation.x = self.get_parameter('orien-x').get_parameter_value().double_value
+        self.goal_pose.pose.orientation.y = self.get_parameter('orien-y').get_parameter_value().double_value
+        self.goal_pose.pose.orientation.z = self.get_parameter('orien-z').get_parameter_value().double_value
+        self.goal_pose.pose.orientation.w = self.get_parameter('orien-w').get_parameter_value().double_value
+
+        self.get_logger().info('POSE:')
+        self.get_logger().info(str(self.goal_pose.pose.position))
+        self.get_logger().info('ORIENT')
+        self.get_logger().info(str(self.goal_pose.pose.orientation))
+
+
 
     #definimos la funcion de mandar goal
     def send_goal(self, position, orientation):
@@ -36,19 +73,9 @@ class NavigateToPoseClient(Node):
 
         # crea el mensaje tipo Goal
         # y lo rellena con el argumento dado
-        goal_pose = PoseStamped()
-        goal_pose.header.frame_id = 'map'
-        goal_pose.header.stamp = self.get_clock().now().to_msg()
-        goal_pose.pose.position.x = 1.0
-        goal_pose.pose.position.y = 0.0
-        goal_pose.pose.position.z = 0.0
-        goal_pose.pose.orientation.x = 0.0
-        goal_pose.pose.orientation.y = 0.0
-        goal_pose.pose.orientation.z = 0.0
-        goal_pose.pose.orientation.w = 1.0
 
         goal_msg = NavigateToPose.Goal()
-        goal_msg.pose = goal_pose
+        goal_msg.pose = self.goal_pose
         self.get_logger().info('Creo objeto')
 
         #espera a que el servidor este listo
@@ -58,8 +85,8 @@ class NavigateToPoseClient(Node):
 
         
 
-        self.get_logger().info('Navigating to goal: ' + str(goal_pose.pose.position.x) + ' ' +
-                      str(goal_pose.pose.position.y) + '...')
+        self.get_logger().info('Navigating to goal: ' + str(self.goal_pose.pose.position.x) + ' ' +
+                      str(self.goal_pose.pose.position.y) + '...')
 
         #self._action_client.wait_for_server()
         
