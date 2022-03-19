@@ -7,7 +7,21 @@ from geometry_msgs.msg import PoseStamped
 
 
 class NavigateToPoseClient(Node):
+    """
+    Clase que representa el action client de NavigateToPose que envia goal 
+    de posicion y orientacion al action server NavigateToPose a traves de los paramaetros de lanzamiento
+    
+    attr:
+     - _goal_pose(PoseStamped): goal a enviar al action server
 
+    methods:
+     - _inicializar_goal_pse_desde_parametros(): Obtiene los parametros de lanzamiento de crea el objeto de clase goal_pose
+     - _send_goal(): envia el goal al action server NavigateToPose
+     - goal_response_callback(): callback que imprime la respuesta del goal recibido del action client
+     - get_result_callback(): callback que imprime el resultado del goal recibido del action client
+     - feedback_callback(): callback que imprime el feedback del goal enviado recibido del action client
+
+    """
     def __init__(self):
         super().__init__('navigate_to_pose_client')
 
@@ -21,9 +35,11 @@ class NavigateToPoseClient(Node):
         self._action_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
 
 
-    # funcion para declarar los parametros de lanzamiento del fichero
+    
     def _inicializar_goal_pose_desde_parametros(self):
-        
+        """
+         funcion para declarar los parametros de lanzamiento del fichero
+        """
         self.declare_parameter('pose-x', 0.0)
         self.declare_parameter('pose-y', 0.0)
 
@@ -33,49 +49,37 @@ class NavigateToPoseClient(Node):
         self.declare_parameter('orien-w', 1.0)
 
 
-        self.goal_pose = PoseStamped()
+        self._goal_pose = PoseStamped()
 
-        self.goal_pose.header.frame_id = 'map'
-        self.goal_pose.header.stamp = self.get_clock().now().to_msg()
+        self._goal_pose.header.frame_id = 'map'
+        self._goal_pose.header.stamp = self.get_clock().now().to_msg()
 
-        self.goal_pose.pose.position.x = self.get_parameter('pose-x').get_parameter_value().double_value
-        self.goal_pose.pose.position.y = self.get_parameter('pose-y').get_parameter_value().double_value
-        self.goal_pose.pose.position.z = 0.0 # siempre sera 0
+        self._goal_pose.pose.position.x = self.get_parameter('pose-x').get_parameter_value().double_value
+        self._goal_pose.pose.position.y = self.get_parameter('pose-y').get_parameter_value().double_value
+        self._goal_pose.pose.position.z = 0.0 # siempre sera 0
 
-        self.goal_pose.pose.orientation.x = self.get_parameter('orien-x').get_parameter_value().double_value
-        self.goal_pose.pose.orientation.y = self.get_parameter('orien-y').get_parameter_value().double_value
-        self.goal_pose.pose.orientation.z = self.get_parameter('orien-z').get_parameter_value().double_value
-        self.goal_pose.pose.orientation.w = self.get_parameter('orien-w').get_parameter_value().double_value
+        self._goal_pose.pose.orientation.x = self.get_parameter('orien-x').get_parameter_value().double_value
+        self._goal_pose.pose.orientation.y = self.get_parameter('orien-y').get_parameter_value().double_value
+        self._goal_pose.pose.orientation.z = self.get_parameter('orien-z').get_parameter_value().double_value
+        self._goal_pose.pose.orientation.w = self.get_parameter('orien-w').get_parameter_value().double_value
 
         self.get_logger().info('POSE:')
-        self.get_logger().info(str(self.goal_pose.pose.position))
+        self.get_logger().info(str(self._goal_pose.pose.position))
         self.get_logger().info('ORIENT')
-        self.get_logger().info(str(self.goal_pose.pose.orientation))
+        self.get_logger().info(str(self._goal_pose.pose.orientation))
 
 
 
-    #definimos la funcion de mandar goal
-    def send_goal(self, position, orientation):
+    def send_goal(self):
         """
-        Manda el goal a Navigate to pose
-        Args:
-            position:
-                x: -5.41667556763
-                y: -3.14395284653
-                z: 0.0
-            orientation:
-                x: 0.0
-                y: 0.0
-                z: 0.785181432231
-                w: 0.619265789851
+         Funcion que envia el goal al action server Navigate To pose
         """
-
 
         # crea el mensaje tipo Goal
         # y lo rellena con el argumento dado
 
         goal_msg = NavigateToPose.Goal()
-        goal_msg.pose = self.goal_pose
+        goal_msg.pose = self._goal_pose
         self.get_logger().info('Creo objeto')
 
         #espera a que el servidor este listo
@@ -85,10 +89,9 @@ class NavigateToPoseClient(Node):
 
         
 
-        self.get_logger().info('Navigating to goal: ' + str(self.goal_pose.pose.position.x) + ' ' +
-                      str(self.goal_pose.pose.position.y) + '...')
+        self.get_logger().info('Navigating to goal: ' + str(self._goal_pose.pose.position.x) + ' ' +
+                      str(self._goal_pose.pose.position.y) + '...')
 
-        #self._action_client.wait_for_server()
         
         # envia el goal
         self._send_goal_future = self._action_client.send_goal_async(goal_msg,feedback_callback=self.feedback_callback)
@@ -96,8 +99,12 @@ class NavigateToPoseClient(Node):
 
         self._send_goal_future.add_done_callback(self.goal_response_callback)
     
-    #definimos la funcion de respuesta al goal
     def goal_response_callback(self, future):
+        """
+            Funcion que recibe la respuesta del goal
+            arg:
+                future: objeto que contiene el resultado 
+        """
         goal_handle = future.result()
         if not goal_handle.accepted:
             self.get_logger().info('Goal rejected :(')
@@ -108,8 +115,13 @@ class NavigateToPoseClient(Node):
         self._get_result_future = goal_handle.get_result_async()
         self._get_result_future.add_done_callback(self.get_result_callback)
     
-    #definimos la funcion de respuesta al resultado
+    
     def get_result_callback(self, future):
+        """
+            Funcion de respuesta al resultado
+            args:
+                future: objeto que contiene el resultado de la respuesta
+        """
         result = future.result().result
         self.get_logger().info('Result: {0}'.format(result.result))
         rclpy.shutdown()
@@ -117,7 +129,7 @@ class NavigateToPoseClient(Node):
     #definimos la funcion de respuesta al feedback
     def feedback_callback(self, feedback_msg):
         """
-        Imprimir el feedback del action client
+        Funcion que recibe el feedbak del action client y lo imprime en pantalla
         args:
             feedback_msg: 
                 goal_id=unique_identifier_msgs.msg.UUID, 
@@ -142,7 +154,7 @@ def main(args=None):
     
     try:
         
-        future_goal = action_client.send_goal(5,5) 
+        future_goal = action_client.send_goal() 
         rclpy.spin(action_client)
         
 
