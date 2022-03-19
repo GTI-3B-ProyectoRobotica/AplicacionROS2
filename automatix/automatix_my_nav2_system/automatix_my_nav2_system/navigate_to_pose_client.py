@@ -16,7 +16,7 @@ class NavigateToPoseClient(Node):
 
     methods:
      - _inicializar_goal_pse_desde_parametros(): Obtiene los parametros de lanzamiento de crea el objeto de clase goal_pose
-     - _send_goal(): envia el goal al action server NavigateToPose
+     - send_goal(): envia el goal al action server NavigateToPose
      - goal_response_callback(): callback que imprime la respuesta del goal recibido del action client
      - get_result_callback(): callback que imprime el resultado del goal recibido del action client
      - feedback_callback(): callback que imprime el feedback del goal enviado recibido del action client
@@ -94,10 +94,10 @@ class NavigateToPoseClient(Node):
 
         
         # envia el goal
-        self._send_goal_future = self._action_client.send_goal_async(goal_msg,feedback_callback=self.feedback_callback)
+        self.send_goal_future = self._action_client.send_goal_async(goal_msg,feedback_callback=self.feedback_callback)
         self.get_logger().info('Se envio el goal')
 
-        self._send_goal_future.add_done_callback(self.goal_response_callback)
+        self.send_goal_future.add_done_callback(self.goal_response_callback)
     
     def goal_response_callback(self, future):
         """
