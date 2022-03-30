@@ -37,7 +37,9 @@ if(BUILD_TESTING)
 endif()
 
 rosidl_generate_interfaces(${PROJECT_NAME}
+  "srv/IrZona.srv"  #servicio ir a zona
   "srv/GuardarZona.srv"
 )
+
 
 ament_package()
