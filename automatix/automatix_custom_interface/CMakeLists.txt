@@ -36,5 +36,9 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "srv/IrZona.srv"  #servicio ir a zona
+)
+
 
 ament_package()
