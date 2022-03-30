@@ -36,5 +36,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "srv/EscanearMsg.srv" 
+)
 ament_package()
