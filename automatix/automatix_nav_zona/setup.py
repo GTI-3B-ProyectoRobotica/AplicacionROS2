@@ -18,7 +18,7 @@ setup(
     zip_safe=True,
     maintainer='lorelay',
     maintainer_email='rainbowg03@gmail.com',
-    description='TODO: Package description',
+    description='TODO: Packages description',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
