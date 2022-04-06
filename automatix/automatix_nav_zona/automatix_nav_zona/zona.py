@@ -38,8 +38,8 @@ class Zona:
         """
         array1 = linea.split(':')
         name = array1[0]
-        coordenadas = array1[1].split(',')
-        self._name=name
+        coordenadas = array1[1].split('$')
+        self._nombre=name
         self._xi=coordenadas[0]
         self._yi=coordenadas[1]
         self._xs=coordenadas[2]
@@ -50,12 +50,18 @@ class Zona:
     def get_name(self):
         """Devuelve el nombre de la zona
         Return: 
-            name: el nombre de la zona"""
-        return self._name
+            nombre: el nombre de la zona"""
+        return self._nombre
+    
+    def get_punto_medio(self):
+        """Devuelve el punto medio de la zona
+        Return: 
+            punto_medio: el punto medio de la zona"""
+        return self._punto_medio
 
     
     def toString(self):
-        return self._name+": inferior(" +self._xi +  ", " + self._yi +  "), superior(" + self._xs +  ", " + self._ys +  "), " + "Punto medio: " + str(self._punto_medio) 
+        return self._nombre+": inferior(" +self._xi +  ", " + self._yi +  "), superior(" + self._xs +  ", " + self._ys +  "), " + "Punto medio: " + str(self._punto_medio) 
     
     def _calcular_punto_medio(self):
         """ Calcula el punto medio de la zona
