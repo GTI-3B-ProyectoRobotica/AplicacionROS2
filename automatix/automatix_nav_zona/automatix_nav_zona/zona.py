@@ -38,7 +38,7 @@ class Zona:
         """
         array1 = linea.split(':')
         name = array1[0]
-        coordenadas = array1[1].split('$')
+        coordenadas = array1[1].split(',')
         self._nombre=name
         self._xi=coordenadas[0]
         self._yi=coordenadas[1]
