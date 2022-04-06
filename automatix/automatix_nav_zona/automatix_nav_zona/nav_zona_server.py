@@ -16,12 +16,13 @@ from automatix_nav_zona.zona import Zona
 class Service(Node):
 
     _zonas = {}
+    _path_to_zonas_file = "/home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt"
 
     def __init__(self):
         #constructor con el nombre del nodo
         super().__init__('nav_zona_server')
         #cambiarlo por ruta relativa
-        self._rellenarDiccionarioZonas("/home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt")
+        self._rellenarDiccionarioZonas(self._path_to_zonas_file)
         
         # declara el objeto servicio pasando como parametros
         # tipo de mensaje
@@ -35,8 +36,11 @@ class Service(Node):
 
         self._goal_pose = PoseStamped()
         #comprobamos que request.zona (lo que mandamos) existe en el diccionario
+        self.get_logger().info('LLEGA: '+str(request.zona))
         if request.zona in self._zonas:
+            self.get_logger().info('EXISTE ZONA: '+str(request.zona))
             x,y = self._zonas[request.zona].get_punto_medio()
+            self.get_logger().info('ME MUEVO A: x:'+str(x)+' y:'+str(y))
             self._goal_pose.header.frame_id = 'map'
             self._goal_pose.header.stamp = self.get_clock().now().to_msg()
             self._goal_pose.pose.position.x = x
@@ -54,6 +58,10 @@ class Service(Node):
             self.get_logger().info(str(self._goal_pose.pose.orientation))
             self.send_goal()
 
+            response.success = True
+        elif request.zona == "zonas_added":
+            self.get_logger().info('ZONA ADDED')
+            self._rellenarDiccionarioZonas(self._path_to_zonas_file)
             response.success = True
         else:
             response.success = False
@@ -143,7 +151,7 @@ class Service(Node):
                         distance_remaining=0.23206885159015656))
         """
         feedback = feedback_msg.feedback
-        self.get_logger().info('Received feedback: {0}'.format(feedback))
+        #self.get_logger().info('Received feedback: {0}'.format(feedback))
 
 
 def main(args=None):
