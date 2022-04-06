@@ -38,5 +38,6 @@ endif()
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/EscanearMsg.srv" 
+  "srv/GuardarZona.srv"
 )
 ament_package()
