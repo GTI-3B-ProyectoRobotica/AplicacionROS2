@@ -21,14 +21,14 @@ class Service(Node):
         #constructor con el nombre del nodo
         super().__init__('nav_zona_server')
         #cambiarlo por ruta relativa
-        self._rellenarDiccionarioZonas("/home/lorelay/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt")
+        self._rellenarDiccionarioZonas("/home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt")
         
         # declara el objeto servicio pasando como parametros
         # tipo de mensaje
         # nombre del servicio
         # callback del servicio
         self.srv = self.create_service(IrZona, 'IrZona', self.automatix_nav_zona_callback)
-        self.publisher = self.create_publisher(PoseStamped, 'goal')
+        self._action_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
 
 
     def automatix_nav_zona_callback(self, request, response):
