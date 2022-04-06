@@ -7,6 +7,7 @@ import random
 #importar  biblioteca Python ROS2
 import rclpy
 from rclpy.node import Node
+import os
 
 class Service(Node):
 
@@ -17,6 +18,7 @@ class Service(Node):
         # tipo de mensaje
         # nombre del servicio
         # callback del servicio
+        self.get_logger().info('INICIO SERVER')
         self.srv = self.create_service(EscanearMsg, 'escaneo_autonomo', self.my_first_service_callback)
 
 
