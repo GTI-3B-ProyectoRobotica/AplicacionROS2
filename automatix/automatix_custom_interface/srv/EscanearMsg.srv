@@ -1,0 +1,3 @@
+string escanear # Orden para el escaneo autonomo "escanear"
+---
+bool success #respuesta

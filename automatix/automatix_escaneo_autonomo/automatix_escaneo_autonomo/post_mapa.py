@@ -1,0 +1,60 @@
+# post_mapa.py
+# Script que convierte el fichero pgm guardado en 
+# lo convierte en png, luego en base64 y lo envia al servidor
+from cmath import log
+import sys
+import os
+from PIL import Image
+import base64
+import requests
+import json
+from geometry_msgs.msg import Twist
+
+IP_PUERTO = "http://192.168.85.84:8080"
+
+def main(args=None):
+    
+
+    
+    
+
+    imgBase64 = ''
+
+    # 1 Obtener fichero pgm
+    path = '../../automatix_my_nav2_system/config/'
+    for file in os.listdir(path):
+        filename, extension  = os.path.splitext(file)
+        
+        if extension == ".pgm":
+            # 2 Transformarlo a png
+            new_file = "{}.png".format(filename)
+
+            # 3 guardarlo
+            with Image.open(path+file) as im:
+                im.save(new_file)
+
+            # Transoformarlo a base 64
+            imgBase64 = base64.b64encode(open(new_file,"rb").read())
+
+            # borrar el fichero
+            os.remove(new_file)
+        # if
+    # for
+
+    imgStr = imgBase64.decode('utf-8')
+    # 4 subirlo
+    headers = {'content-type': 'application/json'}
+    data = {
+        "idMapa": 1, 
+        "imagen": imgStr
+    }
+    response = requests.post(IP_PUERTO+'/mapa',json=data,headers=headers)
+   
+
+    # 6 enivat al topic un ok
+    if(response.status_code == 200):
+        a = 1
+                
+
+if __name__ == '__main__':
+    main()
