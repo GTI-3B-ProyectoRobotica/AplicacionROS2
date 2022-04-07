@@ -1,6 +1,7 @@
 # post_mapa.py
 # Script que convierte el fichero pgm guardado en 
 # lo convierte en png, luego en base64 y lo envia al servidor
+# tambien lee el dato resolution del fichero en my_map.yaml
 from cmath import log
 import sys
 import os
@@ -9,19 +10,17 @@ import base64
 import requests
 import json
 from geometry_msgs.msg import Twist
+import yaml
+
 
 IP_PUERTO = "http://192.168.85.84:8080"
 
 def main(args=None):
-    
-
-    
-    
 
     imgBase64 = ''
-
     # 1 Obtener fichero pgm
     path = '../../automatix_my_nav2_system/config/'
+    #path = 'automatix_my_nav2_system/config/'
     for file in os.listdir(path):
         filename, extension  = os.path.splitext(file)
         
@@ -41,12 +40,19 @@ def main(args=None):
         # if
     # for
 
+    resolution_yaml = ""
+    with open(path+"my_map.yaml", 'r') as f:
+        data = yaml.load(f)
+        resolution_yaml = data['resolution']
+
     imgStr = imgBase64.decode('utf-8')
     # 4 subirlo
     headers = {'content-type': 'application/json'}
     data = {
         "idMapa": 1, 
-        "imagen": imgStr
+        "imagen": imgStr,
+        "resolucion": resolution_yaml
+
     }
     response = requests.post(IP_PUERTO+'/mapa',json=data,headers=headers)
    
