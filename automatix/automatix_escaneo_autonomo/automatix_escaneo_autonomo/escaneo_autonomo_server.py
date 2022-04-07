@@ -84,12 +84,12 @@ class Service(Node):
             return: True si una distancia es menor a 0.4
         """
         colision = False
-        self.get_logger().info('Colisiones ==============')
+        #self.get_logger().info('Colisiones ==============')
         for d in distancias:
-            self.get_logger().info('Distancia: ' +str(d))
+        #    self.get_logger().info('Distancia: ' +str(d))
             if d <= 0.4:
                 colision = True
-                self.get_logger().info('Colision===============================')
+        #        self.get_logger().info('Colision===============================')
                 break
         return colision
 

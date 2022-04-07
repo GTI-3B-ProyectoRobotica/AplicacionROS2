@@ -26,13 +26,13 @@ class Service(Node):
             zonas = request.zonas.split(";")
             zonasValidas = ""
             self.get_logger().info("%s"%zonas)
-            for zona in zonas:
-                if(len(zona.split(":")) == 2 and len(zona.split(",")) == 4):
-                    zonasValidas += zona + ";"
-                elif(zona !=""):
-                    self.get_logger().info('Error al guardar zonas: zona %s' %zona)
-                    response.success = False
-                    return response
+
+            zonasValidas = self.validar_zonas(zonas)
+            if(zonasValidas == ""):
+                self.get_logger().info('Error al guardar zonas')
+                response.success = False
+                return response
+                    
             self.get_logger().info('Zonas validadas. ')
             try:
                 f = open("/home/pablo/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt", "w")
@@ -52,6 +52,14 @@ class Service(Node):
 
         # devuelve la respuesta
         return response
+    def validar_zonas(self, zonas):
+        zonasValidas = ""
+        for zona in zonas:
+            if(len(zona.split(":")) == 2 and len(zona.split(",")) == 4 and zona[-1:] != ";"):
+                zonasValidas += zona + ";"
+            else:
+                return ""
+        return zonasValidas
 
 def main(args=None):
     # inicializa la comunicacion ROS2
