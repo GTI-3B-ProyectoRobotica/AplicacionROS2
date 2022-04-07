@@ -1,15 +1,12 @@
+"""
+    File: zona.py
+    Author: Lorelay Pricop
+    Status: DONE
+    Date: 04/04/2022
+    Description: Este fichero contiene la definición para poder representar una Zona
+"""
 import re
-
 from numpy import double
-
-"""
-Este fichero contiene la definición para poder representar una Zona
-Classes: 
-    Zona
-
-Author: Lorelay Pricop
-Version: 04/04/2022
-"""
 
 class Zona:
     """

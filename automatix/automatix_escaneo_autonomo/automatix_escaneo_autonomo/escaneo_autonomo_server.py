@@ -1,3 +1,11 @@
+"""
+    File: escaneo_autonomo_server.py
+    Author: Rubén Pardo
+    Status: DONE
+    Date: 30/03/2022
+    Description: Este fichero contiene un servicio el cual cuando se arranca mueve el robot por el mapa y detecta colisiones para obtener un pgm del mapa
+"""
+
 # Importar mensajes
 from geometry_msgs.msg import Twist
 from automatix_custom_interface.srv import EscanearMsg
@@ -21,8 +29,6 @@ class Service(Node):
         self.get_logger().info('INICIO SERVER')
         self.srv = self.create_service(EscanearMsg, 'escaneo_autonomo', self.my_first_service_callback)
 
-
-        
         #flag para controlar cuando esta escaneando o no
         self._is_escaneando = False
 

@@ -1,6 +1,10 @@
-# post_mapa.py
-# Script que convierte el fichero pgm guardado en 
-# lo convierte en png, luego en base64 y lo envia al servidor
+"""
+    File: post_mapa.py
+    Author: Juan Ferrera y Rubén Pardo
+    Status: DONE
+    Date: 27/03/2022
+    Description: Este fichero obtiene un pgm, lo pasa a png, luego a base64 y lo sube a la base de datos
+"""
 from cmath import log
 import sys
 import os
@@ -13,10 +17,6 @@ from geometry_msgs.msg import Twist
 IP_PUERTO = "http://192.168.85.84:8080"
 
 def main(args=None):
-    
-
-    
-    
 
     imgBase64 = ''
 
