@@ -12,10 +12,12 @@ from automatix_custom_interface.srv import EscanearMsg
 from sensor_msgs.msg import LaserScan
 from rclpy.qos import ReliabilityPolicy, QoSProfile
 import random
+from threading import Timer
 #importar  biblioteca Python ROS2
 import rclpy
 from rclpy.node import Node
 import os
+import subprocess
 
 class Service(Node):
 
@@ -42,6 +44,9 @@ class Service(Node):
         # suscribirse a scan para comprobar las colisiones
         self._suscribirse_scan()
 
+        # definir un timer para que el escaneo no sea infinito
+        self.timer = Timer(20,self._terminar_escaneo,args=[]) # tiempo en segundos
+        
         #declara el objeto publisher pasando como parametros
         # tipo de mensaje
         # nombre del topic
@@ -106,6 +111,7 @@ class Service(Node):
 
         if request.escanear == "escanear":
             self.get_logger().info('Recibí escanear')
+            self.timer.start()
             self.mover_robot(0.3,0.0)
             self._is_escaneando = True
             response.success = True
@@ -131,6 +137,21 @@ class Service(Node):
         # publica el mensaje
         self.publisher.publish(msg)
 
+    def _terminar_escaneo(self):
+        """
+            Metodo que se llama al terminar el timer, para el robot
+            compila el mapa, lanza post_mapa y cierra el nodo
+        """
+        self.get_logger().info('TERMINA TIMER ==============')
+        # parar robot
+        self._is_escaneando = False
+        self.mover_robot(0.0,0.0)
+        # TODO compilar mapa 
+        os.system("ros2 run nav2_map_server map_saver_cli -f $HOME/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_my_nav2_system/config/my_map")
+         # TODO lanzar post_map
+        os.system("pip install requests")
+        os.system("python /home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_escaneo_autonomo/automatix_escaneo_autonomo/post_mapa.py")
+      
 
 def main(args=None):
     # inicializa la comunicacion ROS2
