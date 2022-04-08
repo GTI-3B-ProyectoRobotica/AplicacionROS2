@@ -1,3 +1,11 @@
+"""
+    File: nav_zona_server.py
+    Author: Lorelay Pricop
+    Status: DONE
+    Date: 04/04/2022
+    Description: Este fichero obtiene una lista de zonas, crea un diccionario de zonas y, a partir de una zona, calcula su punto medio
+                 y hace que el robot se mueva a ese punto
+"""
 # Importar mensajes
 from geometry_msgs.msg import Twist
 from automatix_custom_interface.srv import IrZona

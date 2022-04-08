@@ -1,15 +1,12 @@
+"""
+    File: zona.py
+    Author: Lorelay Pricop
+    Status: DONE
+    Date: 04/04/2022
+    Description: Este fichero contiene la definición para poder representar una Zona
+"""
 import re
-
 from numpy import double
-
-"""
-Este fichero contiene la definición para poder representar una Zona
-Classes: 
-    Zona
-
-Author: Lorelay Pricop
-Version: 04/04/2022
-"""
 
 class Zona:
     """
@@ -24,7 +21,7 @@ class Zona:
         _punto_medio: punto medio de la zona
 
     Methods:
-        _calcular_punto_medio(): calcula el punto medio de dos coordenadas
+        calcular_punto_medio(): calcula el punto medio de dos coordenadas
         get_name(): devuelve el nombre de la zona
         toString(): devuelve los atributos del objeto como un string
         zonaFromTxt(file): devuelve las zonas formateadas desde un txt
@@ -44,7 +41,7 @@ class Zona:
         self._yi=coordenadas[1]
         self._xs=coordenadas[2]
         self._ys=coordenadas[3]
-        self._punto_medio = self._calcular_punto_medio()
+        self._punto_medio = self.calcular_punto_medio(self._xi, self._xs, self._yi, self._ys)
 
 
     def get_name(self):
@@ -63,14 +60,14 @@ class Zona:
     def toString(self):
         return self._nombre+": inferior(" +self._xi +  ", " + self._yi +  "), superior(" + self._xs +  ", " + self._ys +  "), " + "Punto medio: " + str(self._punto_medio) 
     
-    def _calcular_punto_medio(self):
+    def calcular_punto_medio(self, xi, xs, yi, ys):
         """ Calcula el punto medio de la zona
         Return:
             x, y: las coordenadas x e y del punto medio
         """
 
-        x = (double(self._xi)+double(self._xs))/2
-        y = (double(self._yi)+double(self._ys))/2
+        x = (double(xi)+double(xs))/2
+        y = (double(yi)+double(ys))/2
 
         return x,y
 

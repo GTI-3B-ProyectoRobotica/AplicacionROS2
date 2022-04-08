@@ -1,3 +1,10 @@
+"""
+    File: navigate_to_pose_client.py
+    Author: Rubén Pardo
+    Status: DONE
+    Date: 14/03/2022
+    Description: Este fichero manda un goal con una posición al robot para que vaya a esa posición
+"""
 #action_client.py
 import rclpy
 from rclpy.action import ActionClient
