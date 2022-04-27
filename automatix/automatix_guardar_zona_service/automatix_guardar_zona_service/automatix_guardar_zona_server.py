@@ -43,7 +43,7 @@ class Service(Node):
                     
             self.get_logger().info('Zonas validadas. ')
             try:
-                f = open("/home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt", "w")
+                f = open("/home/pablo/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt", "w")
                 f.write(zonasValidas)
                 f.close()
                 self.get_logger().info("Se está guardando %s" %zonasValidas)

@@ -24,7 +24,7 @@ from automatix_nav_zona.zona import Zona
 class Service(Node):
 
     _zonas = {}
-    _path_to_zonas_file = "/home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt"
+    _path_to_zonas_file = "/home/pablo/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt"
 
     def __init__(self):
         #constructor con el nombre del nodo
