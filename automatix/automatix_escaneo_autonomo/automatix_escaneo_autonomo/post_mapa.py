@@ -16,7 +16,7 @@ from geometry_msgs.msg import Twist
 import yaml
 
 
-IP_PUERTO = "http://192.168.87.118:8080"
+IP_PUERTO = "http://192.168.0.132:8080"
 
 def main(args=None):
 

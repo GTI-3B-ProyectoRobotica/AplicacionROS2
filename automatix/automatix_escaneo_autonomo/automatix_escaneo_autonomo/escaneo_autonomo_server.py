@@ -45,7 +45,7 @@ class Service(Node):
         self._suscribirse_scan()
 
         # definir un timer para que el escaneo no sea infinito
-        self.timer = Timer(20,self._terminar_escaneo,args=[]) # tiempo en segundos
+        self.timer = Timer(60,self._terminar_escaneo,args=[]) # tiempo en segundos
         
         #declara el objeto publisher pasando como parametros
         # tipo de mensaje
@@ -70,9 +70,10 @@ class Service(Node):
                 msg: Mensaje del topic scan, ranges[] array de 360 grados con las distancias a las colisiones
             
         """
+        self.get_logger().info(str(msg.ranges[0]))
         # coger los 40 grados de delante
-        distancias_pared_delante = msg.ranges[0:20]
-        distancias_pared_delante.extend(msg.ranges[340:359])
+        distancias_pared_delante = msg.ranges[0:10]
+        distancias_pared_delante.extend(msg.ranges[350:359])
 
         if self.is_colision(distancias_pared_delante) and self._is_escaneando:
             # a las 20 colisiones cambiamos de direccion
@@ -80,11 +81,10 @@ class Service(Node):
             if(self._cont_cambiar_direccion_temp == 0):
                 self._cont_cambiar_direccion_temp = self._cont_cambiar_direccion
                 self._velocidad_angular = -self._velocidad_angular
-
             self.mover_robot(0.0,self._velocidad_angular)
         elif self._is_escaneando:
             # mover
-            self.mover_robot(0.3,0.0)  
+            self.mover_robot(0.1,0.0)  
           
     def is_colision(self, distancias):
         """
@@ -98,7 +98,7 @@ class Service(Node):
         #self.get_logger().info('Colisiones ==============')
         for d in distancias:
         #    self.get_logger().info('Distancia: ' +str(d))
-            if d <= 0.4:
+            if d <= 0.3:
                 colision = True
         #        self.get_logger().info('Colision===============================')
                 break
