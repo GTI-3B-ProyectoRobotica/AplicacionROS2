@@ -40,6 +40,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/IrZona.srv"  #servicio ir a zona
   "srv/EscanearMsg.srv" 
   "srv/GuardarZona.srv"
+  "srv/ActivarLeerQr.srv"
 )
 
 ament_package()
