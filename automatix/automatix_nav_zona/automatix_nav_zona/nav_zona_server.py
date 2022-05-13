@@ -9,6 +9,7 @@
 # Importar mensajes
 from geometry_msgs.msg import Twist
 from automatix_custom_interface.srv import IrZona
+from automatix_custom_interface.srv import ActivarLeerQr
 
 from nav2_msgs.action import NavigateToPose
 from geometry_msgs.msg import PoseStamped
@@ -24,14 +25,15 @@ from automatix_nav_zona.zona import Zona
 class Service(Node):
 
     _zonas = {}
-    _path_to_zonas_file = "/home/pablo/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt"
+    _path_to_zonas_file = "/home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt"
 
     def __init__(self):
         #constructor con el nombre del nodo
         super().__init__('nav_zona_server')
         #cambiarlo por ruta relativa
         self._rellenarDiccionarioZonas(self._path_to_zonas_file)
-        
+        self._isTransportista = False
+        self.client_leer_qr = self.create_client(ActivarLeerQr, 'servicio_leer_qr')
         # declara el objeto servicio pasando como parametros
         # tipo de mensaje
         # nombre del servicio
@@ -46,6 +48,7 @@ class Service(Node):
         #comprobamos que request.zona (lo que mandamos) existe en el diccionario
         self.get_logger().info('LLEGA: '+str(request.zona))
         if request.zona in self._zonas:
+            self._isTransportista = str(request.zona) == "transportista"
             self.get_logger().info('EXISTE ZONA: '+str(request.zona))
             x,y = self._zonas[request.zona].get_punto_medio()
             self.get_logger().info('ME MUEVO A: x:'+str(x)+' y:'+str(y))
@@ -127,6 +130,12 @@ class Service(Node):
 
         self.get_logger().info('Goal accepted :)')
 
+        self.get_logger().info("empieza es transortista:")
+        self.get_logger().info(str(self._isTransportista))
+        if(not self._isTransportista):
+            # ha reconocido el qr y se dirige a una zona, desactivar el qr
+            self.publicarEnServicioLeerQr(False)
+
         self._get_result_future = goal_handle.get_result_async()
         self._get_result_future.add_done_callback(self.get_result_callback)
     
@@ -139,7 +148,14 @@ class Service(Node):
         """
         result = future.result().result
         self.get_logger().info('Result: {0}'.format(result.result))
-        rclpy.shutdown()
+        self.get_logger().info("termino es transortista:")
+        self.get_logger().info(str(self._isTransportista))
+        if(self._isTransportista):
+            
+            #ha llegado a la zona transportista, activar el qr
+            self.publicarEnServicioLeerQr(True)
+
+        #rclpy.shutdown()
 
     #definimos la funcion de respuesta al feedback
     def feedback_callback(self, feedback_msg):
@@ -159,7 +175,17 @@ class Service(Node):
                         distance_remaining=0.23206885159015656))
         """
         feedback = feedback_msg.feedback
-        #self.get_logger().info('Received feedback: {0}'.format(feedback))
+       
+    def publicarEnServicioLeerQr(self, activar):
+        """
+            Metodo que le publica un mensaje en el servicio /servicio_leer_qr
+            args:
+                activar: T/F
+        """
+        self.get_logger().info("publico en qr: "+str(activar))
+        req = ActivarLeerQr.Request()
+        req.activar = str(activar)
+        self.future = self.client_leer_qr.call_async(req)
 
 
 def main(args=None):

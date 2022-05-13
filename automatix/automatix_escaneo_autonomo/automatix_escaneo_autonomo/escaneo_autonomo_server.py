@@ -126,7 +126,7 @@ class Service(Node):
         if request.escanear == "escanear":
             self.get_logger().info('Recibí escanear')
             self.timer.start()
-            self.mover_robot(0.3,0.0)
+            self.mover_robot(1.3,0.0)
             self._is_escaneando = True
             response.success = True
         else:
