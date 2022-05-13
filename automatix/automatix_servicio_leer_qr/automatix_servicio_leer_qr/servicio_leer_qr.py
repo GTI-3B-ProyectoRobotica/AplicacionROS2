@@ -10,15 +10,18 @@
 from multiprocessing.connection import Client
 from sensor_msgs.msg import Image
 from automatix_custom_interface.srv import ActivarLeerQr
+from automatix_custom_interface.srv import IrZona
 
 #importar  biblioteca Python ROS2
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import ReliabilityPolicy,QoSProfile
 
+# importar open cv2
 import cv2
 import numpy as np
 from cv_bridge import CvBridge, CvBridgeError
+
 
 class Service(Node):
     """
@@ -40,6 +43,14 @@ class Service(Node):
         self._bridge = CvBridge()
         # suscribirse al topic image
         self._suscribirse_image()
+
+        # crear un cliente a nav zona
+        #crea el objeto cliente
+        self.client_nav_zona = self.create_client(IrZona, 'IrZona')
+        #cada segundo revisa si el servicio esta activo
+        while not self.client_nav_zona.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('el servicio nav zona no esta activo, prueba de nuevo...')
+
 
     def _suscribirse_image(self):
         """
@@ -64,21 +75,55 @@ class Service(Node):
                     data: [][]
 
         """ 
+        
         if self._leer_qr:
             
             try:
                 cv_image = self._bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
 
-                cv2.imshow("Imagen",cv_image)
-
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
-                
+                #cv2.imshow("Imagen",cv_image)
+                #cv2.waitKey(0)
+                #cv2.destroyAllWindows()
+                img = cv2.imread("/home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_servicio_leer_qr/automatix_servicio_leer_qr/qrReal.jpeg")
+                det = cv2.QRCodeDetector()
+                val, pts, st_code=det.detectAndDecode(img)
+                ##val id;zona;nombre;cantidad;precio
+                ##self._publicar_nav_zona("zona1")
+                if self._isValidFormatoTextoQr(val):
+                   self.get_logger().info("VAL: "+val)
+                   self._leer_qr = False
+                   
+                   # TODO divir el texto en zona y producto y enviarselo a nav zona ( NAV ZONA que reciba tambien el producto)
+                   zona = val.split(";")[1]
+                   self._publicar_nav_zona(zona)
+            
             except CvBridgeError as e:
                 self.get_logger().info(e)
             
 
 
+    def _isValidFormatoTextoQr(self,text):
+        """
+            args:
+                text:String
+            rerturn T/F si tiene el formato correcto: id;zona;nombre;cantidad;precio
+        """
+        if text !="":    
+            return True
+        return False
+        
+
+    def _publicar_nav_zona(self,zona):
+        """
+            Metodo que publica en el topic /IrZona
+            args:
+                zona: nombre de la zona a ir
+
+        """
+        self.get_logger().info("publico en "+str(zona))
+        req = IrZona.Request()
+        req.zona = zona
+        self.future = self.client_nav_zona.call_async(req)
 
     def service_callback(self, request, response):
         """
@@ -91,12 +136,13 @@ class Service(Node):
                 response:
                     success True|False
         """
-
-        if request.activar:
+        self.get_logger().info(request.activar)
+        if request.activar == "True":
+            self.get_logger().info("activar")
             # ACTIVAR LECTURA QR 
             self._leer_qr = True
             response.success = True
-        elif not request.activar:
+        elif not request.activar  == "True":
             # DESACTIVAR LECTURA QR
             self._leer_qr = False
             response.success = True
