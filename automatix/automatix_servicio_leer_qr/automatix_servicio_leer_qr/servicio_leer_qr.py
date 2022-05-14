@@ -22,6 +22,8 @@ import cv2
 import numpy as np
 from cv_bridge import CvBridge, CvBridgeError
 
+from automatix_servicio_leer_qr.producto import Producto
+
 
 class Service(Node):
     """
@@ -93,9 +95,9 @@ class Service(Node):
                    self.get_logger().info("VAL: "+val)
                    self._leer_qr = False
                    
-                   # TODO divir el texto en zona y producto y enviarselo a nav zona ( NAV ZONA que reciba tambien el producto)
-                   zona = val.split(";")[1]
-                   self._publicar_nav_zona(zona)
+                   producto = Producto(val)
+
+                   self._publicar_nav_zona(producto.get_zona(),producto)
             
             except CvBridgeError as e:
                 self.get_logger().info(e)
@@ -113,16 +115,19 @@ class Service(Node):
         return False
         
 
-    def _publicar_nav_zona(self,zona):
+    def _publicar_nav_zona(self,zona, producto):
         """
             Metodo que publica en el topic /IrZona
             args:
                 zona: nombre de la zona a ir
+                producto: producto que transporta a esa zona
 
         """
-        self.get_logger().info("publico en "+str(zona))
+        
         req = IrZona.Request()
         req.zona = zona
+        req.producto = producto.toString()
+        self.get_logger().info("publico en "+str(req))
         self.future = self.client_nav_zona.call_async(req)
 
     def service_callback(self, request, response):

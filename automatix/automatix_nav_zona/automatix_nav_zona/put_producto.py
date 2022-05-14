@@ -13,16 +13,16 @@ import json
 import yaml
 
 
-IP_PUERTO = "http://192.168.1.101:8080"
+IP_PUERTO = "http://192.168.1.114:8080"
 
 def main():
 
 
-    idProducto= sys.argv[1]
+    idProducto= int(sys.argv[1])
     nombre =sys.argv[2]
     idZona= sys.argv[3]
-    cantidad = sys.argv[4]
-    precio = sys.argv[5]
+    cantidad = int(sys.argv[4])
+    precio = float(sys.argv[5])
 
     # 4 subirlo
     headers = {'content-type': 'application/json'}
@@ -34,6 +34,7 @@ def main():
         "precio": precio
 
     }
+    print(data)
     response = requests.put(IP_PUERTO+'/producto',json=data,headers=headers)
    
     print(response.status_code)

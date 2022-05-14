@@ -7,6 +7,7 @@
                  y hace que el robot se mueva a ese punto
 """
 # Importar mensajes
+
 from geometry_msgs.msg import Twist
 from automatix_custom_interface.srv import IrZona
 from automatix_custom_interface.srv import ActivarLeerQr
@@ -20,10 +21,41 @@ import rclpy
 from rclpy.node import Node
 import sys
 sys.path.insert(1, '../automatix_nav_zona')
+
+
 from automatix_nav_zona.zona import Zona
+from automatix_nav_zona.producto import Producto
+import os
+
 
 class Service(Node):
+    """
+        Servicio que controla el ir a una zona. Escucha mensajes de IrZona{zona:"nombre de la zona"}, este nombre se comprueba
+        en una array en local de las zonas que conoce (Se inicializa al principio leyendo un fichero donde se van actualizanco)
+        Si la zona es transportista cuando el goal de nav_client termina con exito public en el servicio de 
+        leer qr un activar = true. Por otra parte, le llegara una zona y un producto y descativara la lectura de qr publicando al 
+        servicio un activar = false. Cuando se resuelve con extio el goal del nav client llamara al script put_product para actualizar la 
+        base de datos
 
+        Tambien escucha mensajes de tipe IrZona = zonaAdded para actualizar sus zonas guardadas leyendo otra vez del fichero
+
+        atributos:
+            _zonas: las zonas que tiene guardada
+            _path_to_zonas_fila: direccion al fichero donde se guardan las zonas del mapa
+            _producto: producto que puede enviarse a una zona
+            _isTransportista: booleano que controla si el robot esta yendo a una zona del transportista o una zona de paquetes
+
+        metodos:
+            automatix_nav_zona_callback: callback del servicio
+            _rellenarDiccionarioZonas: funcion que lee del fichero y actualiza las zonas
+            send_goal: funcion que envia los goal al cliente de navegacion
+            goal_response_callback: callback del goal que envia si se acepto o no
+            get_result_callback: callback que se llama cuando el goal termino
+            feedback_callback
+            publicarEnServicioLeerQr: funcion que publica en el servicio dde leer qr
+            put_producto: funcion que llama al fichero put_producto.py
+    
+    """
     _zonas = {}
     _path_to_zonas_file = "/home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt"
 
@@ -50,8 +82,17 @@ class Service(Node):
         if request.zona in self._zonas:
             self._isTransportista = str(request.zona) == "transportista"
             self.get_logger().info('EXISTE ZONA: '+str(request.zona))
+
+            if not self._isTransportista:
+                # si no es transportista se envia el producto que lleva el robot a la zona
+                self.get_logger().info('Me llego el prodcuto: '+request.producto)
+                self._producto = Producto(request.producto)
+                self.get_logger().info('Me llego el prodcuto: '+str(self._producto.toString()))
+
+            
             x,y = self._zonas[request.zona].get_punto_medio()
             self.get_logger().info('ME MUEVO A: x:'+str(x)+' y:'+str(y))
+            
             self._goal_pose.header.frame_id = 'map'
             self._goal_pose.header.stamp = self.get_clock().now().to_msg()
             self._goal_pose.pose.position.x = x
@@ -151,10 +192,10 @@ class Service(Node):
         self.get_logger().info("termino es transortista:")
         self.get_logger().info(str(self._isTransportista))
         if(self._isTransportista):
-            
             #ha llegado a la zona transportista, activar el qr
             self.publicarEnServicioLeerQr(True)
-
+        else:
+            self.put_producto(self._producto)
         #rclpy.shutdown()
 
     #definimos la funcion de respuesta al feedback
@@ -187,6 +228,11 @@ class Service(Node):
         req.activar = str(activar)
         self.future = self.client_leer_qr.call_async(req)
 
+    def put_producto(self,producto):
+        self.get_logger().info('LLAMO A PUT PRODUCTO')
+        os.system("pip install requests")
+        os.system("python /home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_nav_zona/automatix_nav_zona/put_producto.py "+producto.toStringArgsLineaComando())
+      
 
 def main(args=None):
     # inicializa la comunicacion ROS2
