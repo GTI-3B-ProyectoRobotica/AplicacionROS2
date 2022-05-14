@@ -30,6 +30,9 @@ class NavigateToPoseClient(Node):
 
     """
     def __init__(self):
+        """
+            Inicializa el goal y hace que el robot navegue a ese goal
+        """
         super().__init__('navigate_to_pose_client')
 
 

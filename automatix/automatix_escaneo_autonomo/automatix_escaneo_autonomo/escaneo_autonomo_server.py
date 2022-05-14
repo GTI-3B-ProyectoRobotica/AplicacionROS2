@@ -20,8 +20,10 @@ import os
 import subprocess
 
 class Service(Node):
-
     def __init__(self):
+        """
+        Crea el servicio de escanear el mapa, controla la direccion, comprueba colisiones y establece un temporizador de 60 segundos
+        """
         #constructor con el nombre del nodo
         super().__init__('escaneo_autonomo_server') 
         # declara el objeto servicio pasando como parametros
@@ -53,8 +55,11 @@ class Service(Node):
         # tamaño de la cola
 
         self.publisher = self.create_publisher(Twist, 'cmd_vel', 10)
-
+    
     def _suscribirse_scan(self):
+        """
+            Se suscribe al topic /scan para comprobar las colisiones
+        """
         self.subscriber= self.create_subscription(
             LaserScan,
             '/scan',
@@ -105,6 +110,14 @@ class Service(Node):
         return colision
 
     def my_first_service_callback(self, request, response):
+        """
+            Comprueba si debe escanear o no
+        Args:
+            request : Lo que recibe
+            response : Lo que devuelve
+
+        Returns: response
+        """
         # recibe los parametros de esta clase
         #  recibe el mensaje request
         # devuelve el mensaje response

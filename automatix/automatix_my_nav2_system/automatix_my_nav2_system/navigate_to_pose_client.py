@@ -30,6 +30,9 @@ class NavigateToPoseClient(Node):
 
     """
     def __init__(self):
+        """
+            Inicializa el goal y hace que el robot navegue a ese goal
+        """
         super().__init__('navigate_to_pose_client')
 
 
@@ -45,7 +48,7 @@ class NavigateToPoseClient(Node):
     
     def _inicializar_goal_pose_desde_parametros(self):
         """
-         funcion para declarar los parametros de lanzamiento del fichero
+            funcion para declarar los parametros de lanzamiento del fichero
         """
         self.declare_parameter('pose-x', 0.0)
         self.declare_parameter('pose-y', 0.0)
@@ -79,7 +82,7 @@ class NavigateToPoseClient(Node):
 
     def send_goal(self):
         """
-         Funcion que envia el goal al action server Navigate To pose
+            Funcion que envia el goal al action server Navigate To pose
         """
 
         # crea el mensaje tipo Goal

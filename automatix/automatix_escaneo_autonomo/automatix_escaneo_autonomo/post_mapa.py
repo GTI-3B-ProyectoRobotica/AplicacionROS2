@@ -19,7 +19,11 @@ import yaml
 IP_PUERTO = "http://192.168.0.132:8080"
 
 def main(args=None):
-
+    """
+        Recoge el pgm escaneado, lo convierte a png y luego a base64 y lo sube a la BD
+    Args:
+        args (_type_, optional): _description_. Defaults to None.
+    """
     imgBase64 = ''
     # 1 Obtener fichero pgm
     #path = '../../automatix_my_nav2_system/config/'

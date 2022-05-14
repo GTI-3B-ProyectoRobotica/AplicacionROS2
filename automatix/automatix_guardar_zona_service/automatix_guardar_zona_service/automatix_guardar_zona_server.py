@@ -17,6 +17,9 @@ from rclpy.node import Node
 
 class Service(Node):
     def __init__(self):
+        """
+            Crea el servicio para guardar zonas  
+        """
         #constructor con el nombre del nodo
         super().__init__('automatix_guardar_zona_server') 
         # declara el objeto servicio pasando como parametros
@@ -26,6 +29,9 @@ class Service(Node):
         self.srv = self.create_service(GuardarZona, 'automatix_guardar_zona', self.my_first_service_callback)
 
     def my_first_service_callback(self, request, response):
+        """
+            Guarda las zonas validadas en un fichero zonas.txt
+        """
         # recibe los parametros de esta clase
         #  recibe el mensaje request
         # devuelve el mensaje response
