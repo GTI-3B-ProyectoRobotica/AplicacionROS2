@@ -126,7 +126,7 @@ class Service(Node):
         if request.escanear == "escanear":
             self.get_logger().info('Recibí escanear')
             self.timer.start()
-            self.mover_robot(0.3,0.0)
+            self.mover_robot(1.3,0.0)
             self._is_escaneando = True
             response.success = True
         else:
@@ -160,9 +160,8 @@ class Service(Node):
         # parar robot
         self._is_escaneando = False
         self.mover_robot(0.0,0.0)
-        # TODO compilar mapa 
+       
         os.system("ros2 run nav2_map_server map_saver_cli -f $HOME/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_my_nav2_system/config/my_map")
-         # TODO lanzar post_map
         os.system("pip install requests")
         os.system("python /home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_escaneo_autonomo/automatix_escaneo_autonomo/post_mapa.py")
       
