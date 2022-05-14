@@ -4,6 +4,7 @@
     Status: DONE
     Date: 04/04/2022
     Description: Este fichero guarda las zonas que se le mandan desde un servidor en un fichero zonas.txt
+    Functions: __init__, my_first_service_callback, validar_zonas, main
 """
 
 # Importar mensajes

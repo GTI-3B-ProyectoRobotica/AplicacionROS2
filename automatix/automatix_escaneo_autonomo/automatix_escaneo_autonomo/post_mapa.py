@@ -4,6 +4,7 @@
     Status: DONE
     Date: 27/03/2022
     Description: Este fichero obtiene un pgm, lo pasa a png, luego a base64 y lo sube a la base de datos
+    Functions: main
 """
 from cmath import log
 import sys

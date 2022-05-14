@@ -4,6 +4,7 @@
     Status: DONE
     Date: 30/03/2022
     Description: Este fichero contiene un servicio el cual cuando se arranca mueve el robot por el mapa y detecta colisiones para obtener un pgm del mapa
+    Functions: __init__, _suscribirse_scan, listener_scan_callback, is_colision, my_first_service_callback, mover_robot, _terminar_escaneo, main
 """
 
 # Importar mensajes

@@ -4,6 +4,7 @@
     Status: DONE
     Date: 14/03/2022
     Description: Este fichero manda un goal con una posición al robot para que vaya a esa posición
+    Functions: __init__, _inicializar_goal_pose_desde_parametros, send_goal, goal_response_callback, get_result_callback, feedback_callback, main
 """
 #action_client.py
 import rclpy
