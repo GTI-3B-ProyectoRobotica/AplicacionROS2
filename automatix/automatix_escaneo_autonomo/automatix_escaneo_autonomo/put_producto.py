@@ -10,22 +10,28 @@ import sys
 import os
 import requests
 import json
-from geometry_msgs.msg import Twist
 import yaml
 
 
-IP_PUERTO = "http://10.236.57.230:8080"
+IP_PUERTO = "http://192.168.1.101:8080"
 
 def main():
 
 
     idProducto= sys.argv[1]
-    idZona= sys.argv[2]
+    nombre =sys.argv[2]
+    idZona= sys.argv[3]
+    cantidad = sys.argv[4]
+    precio = sys.argv[5]
+
     # 4 subirlo
     headers = {'content-type': 'application/json'}
     data = {
         "idProducto": idProducto, 
-        "idZona": idZona
+        "nombre": nombre,
+        "idZona": idZona,
+        "cantidad": cantidad,
+        "precio": precio
 
     }
     response = requests.put(IP_PUERTO+'/producto',json=data,headers=headers)
