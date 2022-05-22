@@ -144,7 +144,7 @@ def generate_launch_description():
     #    cmd=['gzclient'],
     #    cwd=[launch_dir], output='screen')
 
-    urdf = os.path.join(burger_dir, 'urdf', 'turtlebot3_burger.urdf')
+    urdf = os.path.join(burger_dir, 'urdf', 'turtlebot3_burger_pi.urdf')
 
     start_robot_state_publisher_cmd = Node(
         condition=IfCondition(use_robot_state_pub),

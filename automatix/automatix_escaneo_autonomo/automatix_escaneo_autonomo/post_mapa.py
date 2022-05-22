@@ -17,7 +17,7 @@ from geometry_msgs.msg import Twist
 import yaml
 
 
-IP_PUERTO = "http://192.168.1.114:8080"
+IP_PUERTO = "http://10.236.50.37:8080"
 
 def main(args=None):
     """
@@ -25,6 +25,8 @@ def main(args=None):
     Args:
         args (_type_, optional): _description_. Defaults to None.
     """
+
+    print("post mapa a: "+IP_PUERTO)
     imgBase64 = ''
     # 1 Obtener fichero pgm
     #path = '../../automatix_my_nav2_system/config/'

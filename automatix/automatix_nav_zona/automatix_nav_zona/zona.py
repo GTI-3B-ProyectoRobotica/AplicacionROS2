@@ -38,8 +38,8 @@ class Zona:
         coordenadas = array1[1].split(',')
         self._nombre=name
         self._xi=coordenadas[0]
-        self._yi=coordenadas[1]
-        self._xs=coordenadas[2]
+        self._xs=coordenadas[1]
+        self._yi=coordenadas[2]
         self._ys=coordenadas[3]
         self._punto_medio = self.calcular_punto_medio(self._xi, self._xs, self._yi, self._ys)
 

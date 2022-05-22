@@ -78,8 +78,8 @@ class Service(Node):
         """
         self.get_logger().info(str(msg.ranges[0]))
         # coger los 40 grados de delante
-        distancias_pared_delante = msg.ranges[0:10]
-        distancias_pared_delante.extend(msg.ranges[350:359])
+        distancias_pared_delante = msg.ranges[0:15]
+        distancias_pared_delante.extend(msg.ranges[345:359])
 
         if self.is_colision(distancias_pared_delante) and self._is_escaneando:
             # a las 20 colisiones cambiamos de direccion
@@ -90,7 +90,8 @@ class Service(Node):
             self.mover_robot(0.0,self._velocidad_angular)
         elif self._is_escaneando:
             # mover
-            self.mover_robot(0.1,0.0)  
+            self.mover_robot(0.1,0.0)  # en real
+            self.mover_robot(0.3,0.0)  # en simulacion
           
     def is_colision(self, distancias):
         """
@@ -104,7 +105,7 @@ class Service(Node):
         #self.get_logger().info('Colisiones ==============')
         for d in distancias:
         #    self.get_logger().info('Distancia: ' +str(d))
-            if d <= 0.3:
+            if d <= 0.4:
                 colision = True
         #        self.get_logger().info('Colision===============================')
                 break
@@ -126,7 +127,8 @@ class Service(Node):
         if request.escanear == "escanear":
             self.get_logger().info('Recibí escanear')
             self.timer.start()
-            self.mover_robot(1.3,0.0)
+            self.mover_robot(0.3,0.0)  # en simulacion
+            #self.mover_robot(0.1,0.0) En real
             self._is_escaneando = True
             response.success = True
         else:
@@ -161,8 +163,11 @@ class Service(Node):
         self._is_escaneando = False
         self.mover_robot(0.0,0.0)
        
+        self.get_logger().info("compilo mapa")
         os.system("ros2 run nav2_map_server map_saver_cli -f $HOME/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_my_nav2_system/config/my_map")
+        self.get_logger().info("install requests")
         os.system("pip install requests")
+        self.get_logger().info("lanzo post mapa")
         os.system("python /home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_escaneo_autonomo/automatix_escaneo_autonomo/post_mapa.py")
       
 
