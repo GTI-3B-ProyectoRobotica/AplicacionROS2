@@ -1,0 +1,3 @@
+string activar #True | False
+---
+bool success #respuesta

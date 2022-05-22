@@ -1,0 +1,4 @@
+string zona #zona a la que va a ir
+string producto #producto que lleva a la zona formato: idProducto;zona;nombreProducto;cantidad;precio
+---
+bool success #respuesta

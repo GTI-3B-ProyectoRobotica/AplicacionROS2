@@ -1,0 +1,3 @@
+string zonas # Las zonas que recibe
+---
+bool success # Respuesta

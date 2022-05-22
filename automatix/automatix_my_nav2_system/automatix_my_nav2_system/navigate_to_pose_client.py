@@ -1,3 +1,11 @@
+"""
+    File: navigate_to_pose_client.py
+    Author: Rubén Pardo
+    Status: DONE
+    Date: 14/03/2022
+    Description: Este fichero manda un goal con una posición al robot para que vaya a esa posición
+    Functions: __init__, _inicializar_goal_pose_desde_parametros, send_goal, goal_response_callback, get_result_callback, feedback_callback, main
+"""
 #action_client.py
 import rclpy
 from rclpy.action import ActionClient
@@ -23,6 +31,9 @@ class NavigateToPoseClient(Node):
 
     """
     def __init__(self):
+        """
+            Inicializa el goal y hace que el robot navegue a ese goal
+        """
         super().__init__('navigate_to_pose_client')
 
 
@@ -38,7 +49,7 @@ class NavigateToPoseClient(Node):
     
     def _inicializar_goal_pose_desde_parametros(self):
         """
-         funcion para declarar los parametros de lanzamiento del fichero
+            funcion para declarar los parametros de lanzamiento del fichero
         """
         self.declare_parameter('pose-x', 0.0)
         self.declare_parameter('pose-y', 0.0)
@@ -72,7 +83,7 @@ class NavigateToPoseClient(Node):
 
     def send_goal(self):
         """
-         Funcion que envia el goal al action server Navigate To pose
+            Funcion que envia el goal al action server Navigate To pose
         """
 
         # crea el mensaje tipo Goal
