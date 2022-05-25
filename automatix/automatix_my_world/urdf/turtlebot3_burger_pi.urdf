@@ -1,4 +1,3 @@
-
 <?xml version="1.0" ?>
 <robot name="turtlebot3_burger"
   xmlns:xacro="http://ros.org/wiki/xacro">
@@ -211,13 +210,13 @@
   <joint name="camera_rgb_joint" type="fixed">
     <origin xyz="0.003 0.011 0.009" rpy="0 0 0"/>
     <parent link="camera_link"/>
-    <child link="camera_rgb_frame"/>
+    <child link="camera_frame"/>
   </joint>
-  <link name="camera_rgb_frame"/>
+  <link name="camera_frame"/>
 
   <joint name="camera_rgb_optical_joint" type="fixed">
     <origin xyz="0 0 0" rpy="-1.57 0 -1.57"/>
-    <parent link="camera_rgb_frame"/>
+    <parent link="camera_frame"/>
     <child link="camera_rgb_optical_frame"/>
   </joint>
   <link name="camera_rgb_optical_frame"/>
