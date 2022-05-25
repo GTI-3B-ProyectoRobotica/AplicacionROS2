@@ -62,7 +62,7 @@ class Service(Node):
         self.get_logger().info("ME SUSCRIBO A IMAGE_RAW")
         self.subscription = self.create_subscription(
             Image,
-            '/camera/image_raw',
+            'image',#'/camera/image_raw',
             self._image_callback,
             QoSProfile(depth = 10,reliability = ReliabilityPolicy.BEST_EFFORT))
         # prevent unused variable warning
@@ -80,21 +80,21 @@ class Service(Node):
                     data: [][]
 
         """ 
-        #self.get_logger().info("LLEGA ALGO")
         if self._leer_qr:
             
             try:
-                #self.get_logger().info("LEER")
-                #cv_image = self._bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+                self.get_logger().info("LEER")
+                cv_image = self._bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
 
                 #cv2.imshow("Imagen",cv_image)
                 #cv2.waitKey(0)
                 #cv2.destroyAllWindows()
-                cv_image = cv2.imread("/home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_servicio_leer_qr/automatix_servicio_leer_qr/qrReal.jpeg")
+                #cv_image = cv2.imread("/home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_servicio_leer_qr/automatix_servicio_leer_qr/qrReal.jpeg")
                 det = cv2.QRCodeDetector()
                 val, pts, st_code=det.detectAndDecode(cv_image)
                 ##val id;zona;nombre;cantidad;precio
-                ##self._publicar_nav_zona("zona1")
+                #self._publicar_nav_zona("zona1")
+                self.get_logger().info("LEO: " + str(val))
                 if self._isValidFormatoTextoQr(val):
                    self.get_logger().info("VAL: "+val)
                    self._leer_qr = False

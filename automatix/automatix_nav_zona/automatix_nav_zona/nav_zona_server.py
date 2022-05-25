@@ -215,6 +215,7 @@ class Service(Node):
                         number_of_recoveries=0, 
                         distance_remaining=0.23206885159015656))
         """
+        # TODO mirar si el punto esta dentro de un radio del punto enviado
         feedback = feedback_msg.feedback
        
     def publicarEnServicioLeerQr(self, activar):
