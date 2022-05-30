@@ -53,6 +53,10 @@ class Service(Node):
         #cada segundo revisa si el servicio esta activo
         while not self.client_nav_zona.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('el servicio nav zona no esta activo, prueba de nuevo...')
+        
+
+        self.nombreFoto = "caja"
+        self.idFoto = 0
 
 
     def _suscribirse_image(self):
@@ -69,6 +73,18 @@ class Service(Node):
         self.subscription  
         self.get_logger().info("SUSCRITO")
 
+    def guardar_imagen(self, msg):
+        try:
+            # Seleccionamos bgr8 porque es la codificacion de OpenCV por defecto
+            cv_image = self.bridge_object.imgmsg_to_cv2(msg, desired_encoding="bgr8")
+            cv2.imshow("Imagen capturada por el robot", cv_image)
+            nombre = self.nombreFoto + self.idFoto
+            self.idFoto += 1
+            cv2.imwrite("/home/pablo/turtlebot3_ws/src/AplicacionROS2/automatix/dataset"+nombre+".jpg", cv_image)
+            cv2.waitKey(0)
+            self.get_logger().info("guardado")  
+        except CvBridgeError as e:
+            self.get_logger().info(e) 
 
     def _image_callback(self, msg):
         """
