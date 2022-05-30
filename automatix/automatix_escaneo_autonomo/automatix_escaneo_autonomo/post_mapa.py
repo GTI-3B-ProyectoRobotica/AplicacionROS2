@@ -30,7 +30,7 @@ def main(args=None):
     imgBase64 = ''
     # 1 Obtener fichero pgm
     #path = '../../automatix_my_nav2_system/config/'
-    path = '/home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_my_nav2_system/config/'
+    path = '/home/pablo/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_my_nav2_system/config/'
     for file in os.listdir(path):
         filename, extension  = os.path.splitext(file)
         

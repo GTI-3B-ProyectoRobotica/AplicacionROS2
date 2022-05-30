@@ -24,7 +24,10 @@ setup(
     entry_points={
         'console_scripts': [
             'automatix_guardar_zona_server = automatix_guardar_zona_service.automatix_guardar_zona_server:main', #incluir
-            'automatix_guardar_zona_client = automatix_guardar_zona_service.automatix_guardar_zona_client:main' #incluir
+            'automatix_guardar_zona_client = automatix_guardar_zona_service.automatix_guardar_zona_client:main', #incluir
+
+            'automatix_borrar_zona_server = automatix_guardar_zona_service.automatix_borrar_zona_server:main', #incluir
+            'automatix_borrar_zona_client = automatix_guardar_zona_service.automatix_borrar_zona_client:main' #incluir
         ],
     },
 )
