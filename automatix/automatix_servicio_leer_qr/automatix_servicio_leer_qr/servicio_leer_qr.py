@@ -8,6 +8,7 @@
 
 # Importar mensajes
 from multiprocessing.connection import Client
+from automatix_predict_yolo import predict
 from sensor_msgs.msg import Image
 from automatix_custom_interface.srv import ActivarLeerQr
 from automatix_custom_interface.srv import IrZona
@@ -17,12 +18,12 @@ import rclpy
 from rclpy.node import Node
 from rclpy.qos import ReliabilityPolicy,QoSProfile
 
-# importar open cv2
-import cv2
-import numpy as np
-from cv_bridge import CvBridge, CvBridgeError
 
 from automatix_servicio_leer_qr.producto import Producto
+
+import cv2
+from cv_bridge import CvBridge, CvBridgeError
+
 
 
 class Service(Node):
@@ -36,13 +37,14 @@ class Service(Node):
 
     def __init__(self):
         #constructor con el nombre del nodo
-        super().__init__('automatix_servicio_leer_qr') 
+        super().__init__('automatix_servicio_leer_qr')
         # declara el objeto servicio pasando como parametros
         # tipo de mensaje
         # nombre del servicio
         # callback del servicio
         self.srv = self.create_service(ActivarLeerQr, 'servicio_leer_qr', self.service_callback)
         self._leer_qr = False
+        self._caja_rota = False
         self._bridge = CvBridge()
         # suscribirse al topic image
         self._suscribirse_image()
@@ -97,31 +99,45 @@ class Service(Node):
 
         """ 
         if self._leer_qr:
+            # leer la imagen
+            self.get_logger().info("LEER")
+            cv_image = self._bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+            # guardar imagen
+            cv2.imwrite("/home/tostyfis/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_predict_yolo/automatix_predict_yolo/fotoDesdeRos.jpg", cv_image)
+            # predecir
+            str_prediccion = predict.predecir("xDDD")
             
-            try:
-                self.get_logger().info("LEER")
-                cv_image = self._bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+            if str_prediccion == "caja":
+                # robot centrado, leer qr
+                try:
 
-                #cv2.imshow("Imagen",cv_image)
-                #cv2.waitKey(0)
-                #cv2.destroyAllWindows()
-                #cv_image = cv2.imread("/home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_servicio_leer_qr/automatix_servicio_leer_qr/qrReal.jpeg")
-                det = cv2.QRCodeDetector()
-                val, pts, st_code=det.detectAndDecode(cv_image)
-                ##val id;zona;nombre;cantidad;precio
-                #self._publicar_nav_zona("zona1")
-                self.get_logger().info("LEO: " + str(val))
-                if self._isValidFormatoTextoQr(val):
-                   self.get_logger().info("VAL: "+val)
-                   self._leer_qr = False
-                   
-                   producto = Producto(val)
+                    self.get_logger().info("centrado, leer qr")
+                    #cv2.imshow("Imagen",cv_image)
+                    #cv2.waitKey(0)
+                    #cv2.destroyAllWindows()
+                    #cv_image = cv2.imread("/home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_servicio_leer_qr/automatix_servicio_leer_qr/qrReal.jpeg")
+                    det = cv2.QRCodeDetector()
+                    val, pts, st_code=det.detectAndDecode(cv_image)
+                    ##val id;zona;nombre;cantidad;precio
+                    #self._publicar_nav_zona("zona1")
+                    self.get_logger().info("LEO: " + str(val))
+                    if self._isValidFormatoTextoQr(val):
+                        self.get_logger().info("VAL: "+val)
+                        
+                        self._leer_qr = False
+                        
+                        producto = Producto(val)
 
-                   self._publicar_nav_zona(producto.get_zona(),producto)
-            
-            except CvBridgeError as e:
-                self.get_logger().info(e)
-            
+                        self._publicar_nav_zona(producto.get_zona(),producto)
+                except CvBridgeError as e:
+                    self.get_logger().info(e)
+            # if--------------
+            elif str_prediccion == "caja_rota":
+                self.get_logger().info("centrado, caja rota")
+                self._publicar_nav_zona("cajas_rotas",producto)
+            # elif--------------
+        # if------------------
+           
 
 
     def _isValidFormatoTextoQr(self,text):
@@ -179,7 +195,12 @@ class Service(Node):
         # devuelve la respuesta
         return response
 
-    
+
+    def _mover_robot(self, direccion):
+        """
+            mover el robot hacia esa direccion
+        """
+        self._centrando_caja = False
 
 
 
@@ -188,6 +209,7 @@ def main(args=None):
     rclpy.init(args=args)
     # creamos el nodo
     service = Service()
+
     try:
         #dejamos abierto el servicio
         rclpy.spin(service)
