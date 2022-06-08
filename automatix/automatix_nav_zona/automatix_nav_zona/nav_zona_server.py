@@ -232,7 +232,7 @@ class Service(Node):
     def put_producto(self,producto):
         self.get_logger().info('LLAMO A PUT PRODUCTO')
         os.system("pip install requests")
-        os.system("python /home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_nav_zona/automatix_nav_zona/put_producto.py "+producto.toStringArgsLineaComando())
+        os.system("python /home/tostyfis/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_nav_zona/automatix_nav_zona/put_producto.py "+producto.toStringArgsLineaComando())
       
 
 def main(args=None):

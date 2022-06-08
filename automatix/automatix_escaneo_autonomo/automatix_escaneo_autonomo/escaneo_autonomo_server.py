@@ -90,7 +90,7 @@ class Service(Node):
             self.mover_robot(0.0,self._velocidad_angular)
         elif self._is_escaneando:
             # mover
-            self.mover_robot(0.1,0.0)  # en real
+            #self.mover_robot(0.1,0.0)  # en real
             self.mover_robot(0.3,0.0)  # en simulacion
           
     def is_colision(self, distancias):
@@ -168,7 +168,7 @@ class Service(Node):
         self.get_logger().info("install requests")
         os.system("pip install requests")
         self.get_logger().info("lanzo post mapa")
-        os.system("python /home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_escaneo_autonomo/automatix_escaneo_autonomo/post_mapa.py")
+        os.system("python /home/tostyfis/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_escaneo_autonomo/automatix_escaneo_autonomo/post_mapa.py")
       
 
 def main(args=None):

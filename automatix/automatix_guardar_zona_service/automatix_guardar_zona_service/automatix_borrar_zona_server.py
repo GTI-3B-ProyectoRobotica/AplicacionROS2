@@ -30,7 +30,7 @@ class Service(Node):
 
         if request.zona != "":
             try:
-                f = open("/home/pablo/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt", "r+")
+                f = open("/home/tostyfis/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt", "r+")
                 zonas = f.readline()
                 zonas = zonas.split(";")
                 zonas = zonas[:-1]
