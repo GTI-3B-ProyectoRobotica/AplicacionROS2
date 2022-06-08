@@ -57,7 +57,7 @@ class Service(Node):
     
     """
     _zonas = {}
-    _path_to_zonas_file = "/home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt"
+    _path_to_zonas_file = "/home/tostyfis/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt"
 
     def __init__(self):
         #constructor con el nombre del nodo
@@ -215,6 +215,7 @@ class Service(Node):
                         number_of_recoveries=0, 
                         distance_remaining=0.23206885159015656))
         """
+        # TODO mirar si el punto esta dentro de un radio del punto enviado
         feedback = feedback_msg.feedback
        
     def publicarEnServicioLeerQr(self, activar):
@@ -231,7 +232,7 @@ class Service(Node):
     def put_producto(self,producto):
         self.get_logger().info('LLAMO A PUT PRODUCTO')
         os.system("pip install requests")
-        os.system("python /home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_nav_zona/automatix_nav_zona/put_producto.py "+producto.toStringArgsLineaComando())
+        os.system("python /home/tostyfis/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_nav_zona/automatix_nav_zona/put_producto.py "+producto.toStringArgsLineaComando())
       
 
 def main(args=None):

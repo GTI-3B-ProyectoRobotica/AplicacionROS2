@@ -1,0 +1,3 @@
+string zona # La zona que va a borrar
+---
+bool success # Respuesta

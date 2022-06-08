@@ -23,7 +23,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-        	'servicio_leer_qr = automatix_servicio_leer_qr.servicio_leer_qr:main' 
+        	'servicio_leer_qr = automatix_servicio_leer_qr.servicio_leer_qr:main',
+            'hacer_foto = automatix_servicio_leer_qr.hacer_foto:main'
+            'predict_yolo=automatix_servicio_leer_qr.predict:main'
         ],
     },
 )

@@ -46,6 +46,9 @@ class Service(Node):
         self.srv = self.create_service(ActivarLeerQr, 'servicio_leer_qr', self.service_callback)
         self._leer_qr = False
         self._caja_rota = False
+        self._detectando = False
+        self._caja_detectada = False
+        self.str_prediccion = ""
         self._bridge = CvBridge()
         # suscribirse al topic image
         self._suscribirse_image()
@@ -68,10 +71,11 @@ class Service(Node):
         """
             Funcion para suscribirse al topic image_raw
         """
-        self.get_logger().info("ME SUSCRIBO A IMAGE_RAW")
+        topic = '/image'
+        self.get_logger().info("ME SUSCRIBO al topic: "+topic)
         self.subscription = self.create_subscription(
             Image,
-            '/camera/image_raw',#'/camera/image_raw' en simulacion, image en real
+            topic,#'/camera/image_raw' simulacion , image real
             self._image_callback,
             QoSProfile(depth = 10,reliability = ReliabilityPolicy.BEST_EFFORT))
         # prevent unused variable warning
@@ -79,11 +83,6 @@ class Service(Node):
         self.get_logger().info("SUSCRITO")
 
     def guardar_imagen(self, msg):
-        """
-            Funcion para guardar las iimagenes del robot
-            pulsando la q o dsecartarlas con otra tecla
-            Usado para obtener el dataset
-        """
         try:
             # Seleccionamos bgr8 porque es la codificacion de OpenCV por defecto
             cv_image = self.bridge_object.imgmsg_to_cv2(msg, desired_encoding="bgr8")
@@ -105,29 +104,36 @@ class Service(Node):
                     heigth: double
                     data: [][]
 
-        """
-        self.get_logger().info(str(self._leer_qr))
-        if self._leer_qr:
+        """ 
+        if self._leer_qr and not self._detectando:
             # leer la imagen
-            self.get_logger().info("LEER")
-            cv_image = self._bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-            # guardar imagen
-            cv2.imwrite("/home/tostyfis/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_servicio_leer_qr/automatix_servicio_leer_qr/fotoDesdeRos.jpg", cv_image)
-            # predecir 
-            a = Predict()
-            str_prediccion = a.predecir()
-            print("=========================================")
-            print("Resultado de predict:"+str_prediccion)
+            self.get_logger().info("leer imagen")
+            # lanzar la IA si aun no ha detectado la caja
+            if(not self._caja_detectada):
+                self._detectando = True
+                self.get_logger().info("LEER")
+                cv_image = self._bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+                # guardar imagen
+                cv2.imwrite("/home/tostyfis/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_servicio_leer_qr/automatix_servicio_leer_qr/fotoDesdeRos.jpg", cv_image)
+                # predecir 
+                a = Predict()
+                self.str_prediccion = a.predecir()
+                print("=========================================")
+                print("Resultado de predict:"+self.str_prediccion)
+                self._caja_detectada = self.str_prediccion == "caja"
+                self._detectando = False
             
-            if str_prediccion == "caja":
+            if self.str_prediccion == "caja":
                 # robot centrado, leer qr
                 try:
-
+                    self._caja_detectada = True
+                    self.get_logger().info("DETECTO CAJA")
                     self.get_logger().info("leer qr")
                     #cv2.imshow("Imagen",cv_image)
                     #cv2.waitKey(0)
                     #cv2.destroyAllWindows()
-                    cv_image = cv2.imread("/home/tostyfis/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_servicio_leer_qr/automatix_servicio_leer_qr/qrReal.jpeg")
+                    #cv_image = cv2.imread("/home/ruben/turtlebot3_ws/src/AplicacionROS2/automatix/automatix_servicio_leer_qr/automatix_servicio_leer_qr/qrReal.jpeg")
+                    cv_image = self._bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
                     det = cv2.QRCodeDetector()
                     val, pts, st_code=det.detectAndDecode(cv_image)
                     ##val id;zona;nombre;cantidad;precio
@@ -137,6 +143,8 @@ class Service(Node):
                         self.get_logger().info("VAL: "+val)
                         
                         self._leer_qr = False
+                        self._caja_detectada = False
+                        self.str_prediccion = ""
                         
                         producto = Producto(val)
 
@@ -144,7 +152,7 @@ class Service(Node):
                 except CvBridgeError as e:
                     self.get_logger().info(e)
             # if--------------
-            elif str_prediccion == "caja_rota":
+            elif self.str_prediccion == "caja_rota":
                 self.get_logger().info("centrado, caja rota")
                 self._publicar_nav_zona("cajas_rotas",producto)
             # elif--------------
@@ -206,13 +214,6 @@ class Service(Node):
 
         # devuelve la respuesta
         return response
-
-
-    def _mover_robot(self, direccion):
-        """
-            mover el robot hacia esa direccion
-        """
-        self._centrando_caja = False
 
 
 

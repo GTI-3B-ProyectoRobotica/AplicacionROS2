@@ -13,7 +13,7 @@ import json
 import yaml
 
 
-IP_PUERTO = "http://10.236.50.37:8080"
+IP_PUERTO = "http://192.168.0.101:8080"
 
 def main():
 

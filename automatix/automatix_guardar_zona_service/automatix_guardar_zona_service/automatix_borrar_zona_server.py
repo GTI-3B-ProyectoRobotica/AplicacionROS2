@@ -1,16 +1,7 @@
-"""
-    File: automatix_guardar_zona_server.py
-    Author: Pablo Enguix
-    Status: DONE
-    Date: 04/04/2022
-    Description: Este fichero guarda las zonas que se le mandan desde un servidor en un fichero zonas.txt
-    Functions: __init__, my_first_service_callback, validar_zonas, main
-"""
-
 # Importar mensajes
 from multiprocessing.connection import Client
 from geometry_msgs.msg import Twist
-from automatix_custom_interface.srv import GuardarZona
+from automatix_custom_interface.srv import BorrarZona
 
 #importar  biblioteca Python ROS2
 import rclpy
@@ -19,41 +10,44 @@ from rclpy.node import Node
 class Service(Node):
     def __init__(self):
         """
-            Crea el servicio para guardar zonas  
+            Crea el servicio para borrar una zona  
         """
         #constructor con el nombre del nodo
-        super().__init__('automatix_guardar_zona_server') 
+        super().__init__('automatix_borrar_zona_server') 
         # declara el objeto servicio pasando como parametros
         # tipo de mensaje
         # nombre del servicio
         # callback del servicio
-        self.srv = self.create_service(GuardarZona, 'automatix_guardar_zona', self.my_first_service_callback)
+        self.srv = self.create_service(BorrarZona, 'automatix_borrar_zona', self.my_first_service_callback)
 
     def my_first_service_callback(self, request, response):
         """
-            Guarda las zonas validadas en un fichero zonas.txt
+            Borra la zona del fichero zonas.txt
         """
         # recibe los parametros de esta clase
         #  recibe el mensaje request
         # devuelve el mensaje response
 
-        if request.zonas != "":
-            zonas = request.zonas.split(";")
-            zonasValidas = ""
-            self.get_logger().info("%s"%zonas)
-
-            zonasValidas = self.validar_zonas(zonas)
-            if(zonasValidas == ""):
-                self.get_logger().info('Error al guardar zonas')
-                response.success = False
-                return response
-                    
-            self.get_logger().info('Zonas validadas. ')
+        if request.zona != "":
             try:
-                f = open("/home/tostyfis/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt", "w")
-                f.write(zonasValidas)
+                f = open("/home/tostyfis/turtlebot3_ws/src/AplicacionROS2/automatix/zonas/zonas.txt", "r+")
+                zonas = f.readline()
+                zonas = zonas.split(";")
+                zonas = zonas[:-1]
+                self.get_logger().info("zonas: %s" %zonas)
+                zonaS = ""
+                for zona in zonas:
+                    if not str(zona).find(request.zona):
+                        self.get_logger().info("zona que se borra: %s" %zona)
+                        zonas.remove(zona)
+                
+                for zona in zonas:
+                    zonaS += str(zona) + ";"
+                self.get_logger().info("zonas que se guardan: %s" %zonaS)
+                f.seek(0)
+                f.write(zonaS)
+                f.truncate()
                 f.close()
-                self.get_logger().info("Se está guardando %s" %zonasValidas)
             except Exception as exc:
                 # estado de la respuesta
                 # si no se ha dado ningun caso anterior
